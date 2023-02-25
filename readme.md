@@ -1,4 +1,4 @@
-# Patient Management
+# Employee Management
 composer create-project --prefer-dist laravel/laravel patient "5.7.*"
 
 # Multi Authenticate define
@@ -16,28 +16,28 @@ Create Role User table seeder
 
 Seed data into roles and users seeder class
 
-    DB::table('roles')->inser([
+    DB::table('roles')->insert([
         'name' => 'Admin',
     ])
     
-    DB::table('roles')->inser([
-        'name' => 'Agent',
+    DB::table('roles')->insert([
+        'name' => 'Employee',
     ])
     
     DB::table('users')->insert([
         'role_id' => 1,
-        'name' => 'Super Admin',
-        'username' => 'admin',
+        'first_name' => 'Super',
+        'last_name' => 'admin',
         'email' => 'admin@email.com',
-        'phone' => '01710472020',
+        'status' => 'Active',
         'password' => bcrypt('11111111'),
     ]);
     DB::table('users')->insert([
         'role_id' => 2,
-        'name' => 'Agent',
-        'username' => 'agent',
-        'email' => 'agent@email.com',
-        'phone' => '01880162661',
+        'first_name' => 'MD',
+        'last_name' => 'Employee',
+        'email' => 'employee@email.com',
+        'status' => 'Active',
         'password' => bcrypt('22222222'),
     ]);
 
@@ -53,14 +53,14 @@ check relationship
 Create controller for different user
 
     php artisan make:controller Admin/DashboardController
-    php artisan make:controller Agent/DashboardController
+    php artisan make:controller Employee/DashboardController
     
 # Create Middleware
 
 create middleware to protect route
 
     php artisan make:middleware AdminMiddleware
-    php artisan make:middleware AgentMiddleware
+    php artisan make:middleware EmployeeMiddleware
 
 Now register middleware in Kernel.php
 
@@ -71,8 +71,8 @@ Now register middleware in Kernel.php
     
     });
 
-    Route::group(['as'=>'agent.','prefix' => 'agent','namespace'=>'Agent','middleware'=>['auth','agent']], function () {
-        Route::get('dashboard','AgentDashboard@index')->name('dashboard');
+    Route::group(['as'=>'employee.','prefix' => 'employee','namespace'=>'Employee','middleware'=>['auth','employee']], function () {
+        Route::get('dashboard','EmployeeDashboard@index')->name('dashboard');
 
     });
     
@@ -88,7 +88,7 @@ Now register middleware in Kernel.php
         return redirect()->route('login');
     }
     
-    //AgentMiddleware
+    //EmployeeMiddleware
     if(Auth::check() && Auth::user()->role->id == 1){
         return $next($request);
     }else{
@@ -99,7 +99,7 @@ Now register middleware in Kernel.php
     if (Auth::guard($guard)->check() && Auth::user()->role->id == 1 ) {
         return redirect()->route('admin.dashboard');
     }elseif (Auth::guard($guard)->check() && Auth::user()->role->id == 2) {
-        return redirect()->route('agent.dashboard');
+        return redirect()->route('employee.dashboard');
     }else {
         return $next($request);
     }
@@ -109,7 +109,7 @@ Now register middleware in Kernel.php
     if(Auth::check() && Auth::user()->role->id == 1 ){
         $this->redirectTo = route('admin.dashboard');
     } else {
-        $this->redirectTo = route('agent.dashboard');
+        $this->redirectTo = route('employee.dashboard');
     }
     $this->middleware('guest')->except('logout');
     

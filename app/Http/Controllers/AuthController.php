@@ -15,22 +15,19 @@ class AuthController extends Controller
     public function handleProviderCallback($provider)
     {
         try {
-
             $user = Socialite::driver($provider)->user();
-
             $finduser = User::where('email', $user->email)->first();
 
             if($finduser){
-
                 Auth::login($finduser, true);
-
                 return redirect()->route('employee.dashboard');
-
             }else{
                 $newUser = User::create([
+                    'role_id' => 2,
                     'first_name' => $user->name,
                     'email' => $user->email,
                     'social_id'=> $user->id,
+                    'status'=> 'Active',
                     'password' => encrypt('12345678')
                 ]);
 
