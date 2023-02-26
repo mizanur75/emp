@@ -22,7 +22,7 @@ class EmployeeAttendanceController extends Controller
                             ->orWhere('u.email','LIKE','%'.$search_value.'%')
                             ->orWhere('u.status','LIKE','%'.$search_value.'%');
                     })->orderBy('u.id','DESC')
-                ->select('u.*','ea.in_time as in_time','ea.out_time as out_time','ea.created_at as created_at')
+                ->select('u.*','ea.in_time as in_time','ea.out_time as out_time','ea.created_at as created_at','ea.status as status')
                 ->paginate(20);
         }else{
             $employee_attendances = DB::table('users as u')
