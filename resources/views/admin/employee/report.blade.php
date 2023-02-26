@@ -155,7 +155,7 @@ $auth = Auth::user()->role->name;
                                 @if($attendance->status == 'Present')
                                     <span class="badge badge-success">Present</span>
                                 @else
-                                    <span id="absent{{$attendance->id}}" class="badge badge-danger">Absent</span>
+                                    <span id="absent" class="badge badge-danger">Absent</span>
                                 @endif
                             </td>
 						</tr>
