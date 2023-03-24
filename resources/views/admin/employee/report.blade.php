@@ -73,12 +73,22 @@ $auth = Auth::user()->role->name;
 		<div class="widget-area-2 proclinic-box-shadow">
             <div class="row mb-2">
                 <div class="col-md-12">
-                    <form action="" method="GET">
+                    <form action="{{$auth == 'Admin' ? route('admin.report') : route('employee.report')}}" method="GET">
                         <div class="row" style="margin-top: -8px;">
-                            <div class="col-md-9">
+                            @if($auth == 'Admin')
+                            <div class="col-md-3">
                                 <input type="text" name="search_employee" class="form-control form-control-sm" placeholder="Search (Input employee name, email or Status)">
                             </div>
-                            <div class="col-md-3">
+                            @endif
+                            <div class="col-md-{{$auth == 'Admin'?3:4}}">
+{{--                                <input type="text" name="from_date" class="form-control form-control-sm" placeholder="Enter From Date">--}}
+                                <input type="text" name="from_date" id="start" class="form-control form-control-sm" placeholder="Start Date" @if($start) value="@if($start){{date('Y-m-d', strtotime($start))}}@endif" @endif autocomplete="off">
+                            </div>
+                            <div class="col-md-{{$auth == 'Admin'?3:4}}">
+{{--                                <input type="text" name="to_date" class="form-control form-control-sm" placeholder="Enter to Date">--}}
+                                <input type="text" name="to_date" id="finish" class="form-control form-control-sm" placeholder="End Date" @if($finish) value="{{date('Y-m-d', strtotime($finish))}}" @endif autocomplete="off">
+                            </div>
+                            <div class="col-md-{{$auth == 'Admin'?3:4}}">
                                 <button class="btn btn-block btn-info float-right"> <i class="fa fa-search"></i> Search</button>
                             </div>
                         </div>
@@ -92,10 +102,13 @@ $auth = Auth::user()->role->name;
 							<th>SL</th>
                             @if($auth == 'Admin')
 							<th>Name</th>
+							<th>Email</th>
                             @endif
 							<th>Date</th>
 							<th>In Time</th>
+							<th>In Status</th>
 							<th>Out Time</th>
+							<th>Out Status</th>
 							<th>Total Time (H:M)</th>
 							<th>Status</th>
 						</tr>
@@ -106,6 +119,7 @@ $auth = Auth::user()->role->name;
 							<td>{{$loop->index + 1}}</td>
                             @if($auth == 'Admin')
                                 <td>{{$attendance->first_name}} {{$attendance->last_name}}</td>
+                                <td>{{$attendance->email}}</td>
                             @endif
 							<td>{{date('d M Y', strtotime($attendance->created_at))}}</td>
 							<td>
@@ -120,24 +134,44 @@ $auth = Auth::user()->role->name;
                                             @endif
                                         @endif
                                     @endif
-                                        <span id="show_in_time"></span>
-
-
+                            </td>
+                            <td>
+                                @php
+                                    $start_time =  date('H:i:s', strtotime($attendance->start_time));
+                                    $in_time = date('H:i:s', strtotime($attendance->in_time));
+                                    $checkTime = strtotime($start_time);
+                                    $loginTime = strtotime($in_time);
+                                    $in_status = $checkTime - $loginTime;
+                                @endphp
+                                @if($in_status < 0)
+                                    <span class="badge badge-danger">Late! </span>
+                                @else
+                                    <span class="badge badge-success">Right Time! </span>
+                                @endif
                             </td>
 							<td>
                                 @if($attendance->out_time)
                                     {{date('h:i a', strtotime($attendance->out_time))}}
-                                @else
-                                    @if($auth == 'Employee')
-                                        @if(date('d M Y', strtotime($attendance->created_at)) == date('d M Y', strtotime(now())))
-                                            <input type="checkbox" name="out_time" id="out_time" value="{{$attendance->id}}" data-toggle="toggle" data-width="100" data-height="25">
-                                        @endif
+                                @endif
+
+                            </td>
+                            <td>
+                                @php
+                                    $end_time =  date('H:i:s', strtotime($attendance->end_time));
+                                    $out_t = date('H:i:s', strtotime($attendance->out_time));
+                                    $checkTime = strtotime($end_time);
+                                    $out_time = strtotime($out_t);
+                                    $out_status = $out_time - $checkTime;
+                                @endphp
+                                @if($attendance->out_time)
+                                    @if($out_status < 0)
+                                        <span class="badge badge-danger">Due Time Away! </span>
+                                    @elseif($out_status == 0)
+                                        <span class="badge badge-success">Right Time! </span>
                                     @else
-                                        <span class="text-warning">On Working</span>
+                                        <span class="badge badge-info">Over Time! </span>
                                     @endif
                                 @endif
-                                    <span id="show_out_time"></span>
-
                             </td>
                             @php
                                     $checkInTime = \Carbon\Carbon::parse($attendance->in_time);
@@ -238,6 +272,19 @@ $auth = Auth::user()->role->name;
 <script>
 	$('.select2').select2({
       theme: 'bootstrap4'
+    });
+    $(function() {
+        $( "#start" ).datepicker({
+            dateFormat: 'yy-mm-dd',
+            maxDate: 0
+        });
+    });
+
+    $(function() {
+        $( "#finish" ).datepicker({
+            dateFormat: 'yy-mm-dd',
+            maxDate: 0
+        });
     });
 </script>
 @endpush

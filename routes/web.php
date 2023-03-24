@@ -10,6 +10,8 @@ Route::group(['as'=>'admin.','prefix' => 'admin','namespace'=>'Admin','middlewar
     Route::resource('employee-details','EmployeeDetailsController');
     Route::resource('employee-contact','EmployeeContactController');
     Route::resource('attendance','EmployeeAttendanceController');
+    Route::resource('schedule','ScheduleController');
+    Route::get('report-ini','EmployeeAttendanceController@inireport')->name('inireport');
     Route::get('report','EmployeeAttendanceController@report')->name('report');
 
 
@@ -23,11 +25,12 @@ Route::group(['as'=>'admin.','prefix' => 'admin','namespace'=>'Admin','middlewar
 Route::group(['as'=>'employee.','prefix' => 'employee','namespace'=>'Admin','middleware'=>['auth','employee']], function () {
     Route::get('dashboard','DashboardController@index')->name('dashboard');
     Route::resource('employee','EmployeeController');
-    Route::get('in-time/{id}','EmployeeAttendanceController@in_time')->name('in_time');
+    Route::get('in-time','EmployeeAttendanceController@in_time')->name('in_time');
     Route::get('out-time/{id}','EmployeeAttendanceController@out_time')->name('out_time');
 
     Route::resource('attendance','EmployeeAttendanceController');
 
+    Route::get('report-ini','EmployeeAttendanceController@inireport')->name('inireport');
     Route::get('report','EmployeeAttendanceController@report')->name('report');
 
 });

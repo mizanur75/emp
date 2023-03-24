@@ -12,7 +12,7 @@ class RedirectIfAuthenticated
     {
         if (Auth::guard($guard)->check() && Auth::user()->role->name == 'Admin' ) {
             return redirect()->route('admin.dashboard');
-        }elseif (Auth::guard($guard)->check() && Auth::user()->role->name == 'User') {
+        }elseif (Auth::guard($guard)->check() && Auth::user()->role->name == 'Employee') {
             return redirect()->route('employee.dashboard');
         }
         else {

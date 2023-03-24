@@ -40,9 +40,9 @@ return [
         ],
     ],
     'google' => [
-        'client_id' => '-3gvjohch5udl6n938elnjpe6474ium7c.apps.googleusercontent.com',
-        'client_secret' => '-uvNl7YNuSmtBt253wXpjluNpePME',
-        'redirect' => 'https://emp.devmizanur.com/auth/google/callback',
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT'),
     ],
 
 ];

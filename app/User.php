@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Model\Schedule;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,6 +12,9 @@ class User extends Authenticatable
     use Notifiable;
 
 
+    public function schedule(){
+        return $this->belongsTo(Schedule::class);
+    }
     public function role(){
         return $this->belongsTo(Role::class);
     }

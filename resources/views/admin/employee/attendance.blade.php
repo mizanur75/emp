@@ -27,6 +27,8 @@ select.form-control:not([size]):not([multiple]) {
 	width: 26% !important;
 }
 
+.myPressButton { padding: 5px; border: 1px solid darkgreen; width: 130px; text-align: center; font-size: 12px; margin-left: auto; margin-right: auto; background-color: #fff;}
+
 </style>
 
 @endpush
@@ -71,9 +73,57 @@ $auth = Auth::user()->role->name;
     <!-- Attendance History -->
 	<div class="col-md-12">
 		<div class="widget-area-2 proclinic-box-shadow">
-            @if($auth == 'Employee')
+
 {{--			<button class="btn btn-padding btn-sm btn-primary pull-right" data-toggle="modal" data-target="#addAttendanceModal"><i class="fa fa-plus"></i> Add New</button>--}}
-            @endif
+            @if($auth == 'Employee')
+                <h3 class="widget-title">Attendance</h3>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr class="text-center">
+                                <th>In Time</th>
+                                <th>Out Time</th>
+                                <th>Status</th>
+                            </tr>
+                            <tr class="text-center">
+                                @if($employee_attendances)
+                                <td>
+                                    @if($employee_attendances->in_time)
+                                        {{date('h:i a', strtotime($employee_attendances->in_time))}}
+                                    @else
+                                    <button class="myPressButton myPressButtonIn btn btn-white" data-id="1">In Time</button>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($employee_attendances->out_time)
+                                        {{date('h:i a', strtotime($employee_attendances->out_time))}}
+                                    @else
+                                        <button class="myPressButton @if($employee_attendances) myPressButtonOut @endif btn btn-white" data-id="1" value="{{$employee_attendances->id}}">Out Time</button>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($employee_attendances->in_time != null && $employee_attendances->out_time == null)
+                                        Working
+                                    @else
+                                        Finished
+                                    @endif
+                                </td>
+                                @else
+                                <td>
+                                    <button class="myPressButton myPressButtonIn btn btn-white" data-id="1">In Time</button>
+                                </td>
+                                <td>
+                                    <button class="myPressButton @if($employee_attendances) myPressButtonOut @endif btn btn-white" data-id="1">Out Time</button>
+                                </td>
+                                <td>
+                                </td>
+                                @endif
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            @else
             <h3 class="widget-title">Attendance History</h3>
 			<div class="table-responsive">
 				<table id="attendance" class="table table-bordered table-striped">
@@ -153,8 +203,10 @@ $auth = Auth::user()->role->name;
 					</tbody>
 				</table>
 			</div>
+            @endif
 		</div>
 	</div>
+
 </div>
 
 
@@ -176,52 +228,46 @@ $auth = Auth::user()->role->name;
 <script type="text/javascript" src="{{asset('custom/js/bootstrap-select.js')}}"></script>
 <script src="{{asset('datetime_picker/jquery-ui.js')}}"></script>
 <script src="{{asset('js/select2.full.min.js')}}"></script>
-<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
-
-<script>
-    function chec(){
-        alert()
-    }
+{{--<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>--}}
+<script src="{{asset('assets/js/jquery.pressAndHold.min.js')}}"></script>
+<script type="text/javascript">
     var role = '{{$auth}}';
     var prefix = role.toLowerCase();
-
-        $("#in_time").change(function (){
-            if($(this).prop('checked')) {
-                var id = $(this).val();
-                $.ajax({
-                    url: "{{url('/')}}/"+prefix+"/in-time/"+id,
-                    method: "GET",
-                    success: function (data) {
-                        $("div[data-toggle='toggle']").addClass('d-none');
-                        $("#show_in_time").append(data);
-                        $("#absent").addClass('d-none');
-                        $("#status").html('<span class="badge badge-success">Present</span>');
-
-                    }
-                })
-            }
+    $(document).ready(function() {
+        $(".myPressButtonIn").pressAndHold({
+            holdTime: 1000,
+            progressIndicatorColor: "green",
+            progressIndicatorOpacity: 1
+        });
+        $(".myPressButtonIn").on('complete.pressAndHold', function(event) {
+            console.log("complete");
+            $.ajax({
+                url: "{{url('/')}}/"+prefix+"/in-time/",
+                method: "GET",
+                success: function (data) {
+                    location.reload();
+                }
+            })
         });
 
-
-        $("#out_time").change(function (){
-            if($(this).prop('checked')) {
-                var id = $(this).val();
-                $.ajax({
-                    url: "{{url('/')}}/"+prefix+"/out-time/"+id,
-                    method: "GET",
-                    success: function (data) {
-                        $("div[data-toggle='toggle']").addClass('d-none');
-                        $("#show_out_time").append(data[0]);
-                        $("#show_total_time").append(data[1]);
-
-                    }
-                })
-            }
+        $(".myPressButtonOut").pressAndHold({
+            holdTime: 1000,
+            progressIndicatorColor: "green",
+            progressIndicatorOpacity: 0.3
         });
-
-
+        $(".myPressButtonOut").on('complete.pressAndHold', function(event) {
+            console.log("complete");
+            var id = $(this).val();
+            $.ajax({
+                url: "{{url('/')}}/"+prefix+"/out-time/"+id,
+                method: "GET",
+                success: function (data) {
+                    location.reload();
+                }
+            })
+        });
+    });
 </script>
-
 <script>
 	$('.select2').select2({
       theme: 'bootstrap4'

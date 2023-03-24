@@ -57,6 +57,10 @@
                     <a class="nav-link" href="{{route('employee.attendance.index')}}">
                     <span class="fa fa-clock-o"></span> Attendance</a>
                 </li>
+                <li class="nav-item dropdown {{Request::is('employee/report*')?'active':''}}">
+                    <a class="nav-link" href="{{route('employee.inireport')}}">
+                    <span class="fa fa-clock-o"></span> Reports</a>
+                </li>
             </ul>
         </div>
     </nav>

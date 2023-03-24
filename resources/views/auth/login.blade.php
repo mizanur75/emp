@@ -193,8 +193,8 @@
                             <span class="power">Powered by <a href="https://devmizanur.com" target="_blank">dezmizanur.com</a></span>
                         </div>
                         <div class="form-group">
-                            <a href="{{ url('auth/google') }}" style="margin-top: 20px;" class="btn btn-lg btn-success btn-block">
-                                Login With Google
+                            <a href="{{ url('auth/google') }}" style="margin-top: 20px;" class="btn btn-lg btn-block">
+                                <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" style="margin-left: 3em;">
                             </a>
                         </div>
                     </form>

@@ -24,12 +24,21 @@
 			<form action="{{route('admin.employee.store')}}" method="POST" enctype="multipart/form-data">
 				@csrf
 				<div class="form-row">
-					<div class="form-group col-md-12">
+					<div class="form-group col-md-6">
 						<label for="dob">Role<sup class="text-danger">*</sup></label>
 						<select name="role_id" id="" class="form-control form-control-sm">
 							<option selected="false" disabled>Please Select a Role </option>
 							@foreach($roles as $role)
 							<option value="{{$role->id}}" {{old('role_id') == $role->id ? 'selected':''}}>{{$role->name}}</option>
+							@endforeach
+						</select>
+					</div>
+					<div class="form-group col-md-6">
+						<label for="dob">Time Schedule<sup class="text-danger">*</sup></label>
+						<select name="schedule_id" id="" class="form-control form-control-sm">
+							<option selected="false" disabled>Please Select Schedule </option>
+							@foreach($schedules as $schedule)
+							<option value="{{$schedule->id}}" {{old('schedule_id') == $schedule->id ? 'selected':''}}>{{$schedule->name}} ({{$schedule->start_time}}-{{$schedule->end_time}})</option>
 							@endforeach
 						</select>
 					</div>

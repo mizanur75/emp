@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\EmployeeAttendance;
 use App\Http\Controllers\Controller;
+use App\Model\Schedule;
 use App\Role;
 use App\User;
 use App\Order;
@@ -23,12 +24,14 @@ class EmployeeController extends Controller
     public function create()
     {
         $roles = Role::all();
-        return view('admin.employee.add',compact('roles'));
+        $schedules = Schedule::all();
+        return view('admin.employee.add',compact('roles','schedules'));
     }
 
     public function store(Request $request)
     {
         $this->validate($request, [
+            'schedule_id' => 'required',
             'role_id' => 'required',
             'first_name' => 'required',
             'first_name' => 'required',
@@ -37,6 +40,7 @@ class EmployeeController extends Controller
         ]);
 
         $user = new User();
+        $user->schedule_id = $request->schedule_id;
         $user->role_id = $request->role_id;
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
@@ -59,14 +63,16 @@ class EmployeeController extends Controller
     public function edit($id)
     {
         $roles = Role::all();
+        $schedules = Schedule::all();
         $user = User::find($id);
-        return view('admin.employee.edit', compact('user','roles'));
+        return view('admin.employee.edit', compact('user','roles','schedules'));
     }
 
 
     public function update(Request $request, $id)
     {
         $this->validate($request, [
+            'schedule_id' => 'required',
             'role_id' => 'required',
             'first_name' => 'required',
             'last_name' => 'required',
@@ -75,6 +81,7 @@ class EmployeeController extends Controller
 
         $user = User::find($id);
 
+        $user->schedule_id = $request->schedule_id;
         $user->role_id = $request->role_id;
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;

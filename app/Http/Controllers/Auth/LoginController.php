@@ -29,19 +29,4 @@ class LoginController extends Controller
         // return $request->only($this->username(), 'password');
         return ['email' => $request->{$this->username()},'password'=> $request->password, 'status' => 'Active'];
     }
-
-    protected function sendLoginResponse(Request $request)
-    {
-        $request->session()->regenerate();
-        $user_id = $this->guard()->user()->id;
-        $attendance = EmployeeAttendance::where('user_id',$user_id)->where('created_at','LIKE','%'.date('Y-m-d', strtotime(now())).'%')->first();
-        if (!$attendance && Auth::user()->role->name == 'Employee'){
-            $employee_attendance = new EmployeeAttendance();
-            $employee_attendance->user_id = $user_id;
-            $employee_attendance->save();
-        }
-        $this->clearLoginAttempts($request);
-        return $this->authenticated($request, $this->guard()->user())
-            ?: redirect()->intended($this->redirectPath());
-    }
 }

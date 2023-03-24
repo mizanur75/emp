@@ -25,7 +25,7 @@
 				@csrf
                 @method('PUT')
 				<div class="form-row">
-					<div class="form-group col-md-12">
+					<div class="form-group col-md-6">
 						<label for="dob">Role<sup class="text-danger">*</sup></label>
 						<select name="role_id" id="" class="form-control form-control-sm">
 							<option selected="false" disabled>Please Select a Role</option>
@@ -34,6 +34,15 @@
 							@endforeach
 						</select>
 					</div>
+                    <div class="form-group col-md-6">
+                        <label for="dob">Time Schedule<sup class="text-danger">*</sup></label>
+                        <select name="schedule_id" id="" class="form-control form-control-sm">
+                            <option selected="false" disabled>Please Select Schedule </option>
+                            @foreach($schedules as $schedule)
+                                <option value="{{$schedule->id}}" {{$schedule->id == $user->schedule_id ? 'selected':''}}>{{$schedule->name}} ({{$schedule->start_time}}-{{$schedule->end_time}})</option>
+                            @endforeach
+                        </select>
+                    </div>
 					<div class="form-group col-md-12">
 						<label for="patient-name">First Name<sup class="text-danger">*</sup></label>
 						<input type="text" name="first_name" class="form-control form-control-sm" value="{{$user->first_name}}" id="patient-name">
